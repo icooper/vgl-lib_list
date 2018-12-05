@@ -1,0 +1,478 @@
+{***
+*
+* lib_list.rpf
+*
+* Functional list object based off of the JavaScript Array object. Uses 1-based
+* indicies to be consistent with VGL arrays.
+*
+* Ian Cooper
+* 05 Dec 2018
+*
+***}
+
+ENABLE WINDOWS
+SET NAME "DEFER/"
+
+JOIN STANDARD_LIBRARY STD_ARRAY
+JOIN LIBRARY $lib_utils
+
+GLOBAL CONSTANT LIST_CLASS = "LIST"
+
+{ run tests }
+lib_list_test_list_class ( )
+FLUSHLITERAL
+
+{******************************************************************************}
+GLOBAL ROUTINE lib_list_test_list_class
+
+    DECLARE list, i, j
+
+    SET NAME "DISPLAY/"
+    print_header ( )
+
+    { define class ------------------------------------------------------------}
+    lib_list_define_list_class ( )
+    print_results ( "define class", TRUE )
+
+    { create object -----------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    print_results ( "create object", TRUE )
+
+    { class initialisation ----------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    print_results ( "class initialisation",
+                    ( list . length = 0 ) AND
+                    ( size_of_array ( list . data ) = 0 ) )
+                    
+    { append ------------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "x" )
+    list . append ( "y" ) . append ( "z" )
+    print_results ( "list . append ( )",
+                    ( list . length     = 3   ) AND
+                    ( list . data [ 1 ] = "x" ) AND
+                    ( list . data [ 2 ] = "y" ) AND
+                    ( list . data [ 3 ] = "z" )     )
+
+    { clear -------------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    print_results ( "list . clear ( )",
+                    ( list . length                  = 0 ) AND
+                    ( size_of_array ( list . data )  = 0 ) AND 
+                    ( list . append ( "a" ) . length = 1 )     )
+
+    { concat ------------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    CREATE OBJECT LIST_CLASS, i
+    list . append ( "a" ) . append ( "b" )
+    i    . append ( "x" ) . append ( "y" )
+    j = list . concat ( i )
+    print_results ( "list . concat ( )",
+                    ( list  . length     = 2   ) AND
+                    ( i     . length     = 2   ) AND
+                    ( j     . length     = 4   ) AND
+                    ( j     . data [ 1 ] = "a" ) AND
+                    ( j     . data [ 2 ] = "b" ) AND
+                    ( j     . data [ 3 ] = "x" ) AND
+                    ( j     . data [ 4 ] = "y" )     )
+
+    { get ---------------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "a" ) . append ( "b" )
+    print_results ( "list . get ( )",
+                    ( list . get ( 0 ) = EMPTY ) AND
+                    ( list . get ( 1 ) = "a"   ) AND
+                    ( list . get ( 2 ) = "b"   ) AND
+                    ( list . get ( 3 ) = EMPTY )     )
+
+    { in_bounds ---------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "a" ) . append ( "b" )
+    print_results ( "list . in_bounds ( )",
+                    ( list . in_bounds ( 0 )     = FALSE ) AND
+                    ( list . in_bounds ( 1 )     = TRUE  ) AND
+                    ( list . in_bounds ( 2 )     = TRUE  ) AND
+                    ( list . in_bounds ( 3 )     = FALSE ) AND
+                    ( list . in_bounds ( EMPTY ) = FALSE ) AND
+                    ( list . in_bounds ( "xyz" ) = FALSE )     )
+
+    { includes ----------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "a" ) . append ( "b" )
+    print_results ( "list . includes ( )",
+                    ( list . includes ( "a" )   = TRUE  ) AND
+                    ( list . includes ( "b" )   = TRUE  ) AND
+                    ( list . includes ( "x" )   = FALSE ) AND
+                    ( list . includes ( EMPTY ) = FALSE ) AND
+                    ( list . append ( EMPTY )
+                           . includes ( EMPTY ) = TRUE  )     )
+
+    { indexOf -----------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "a" ) . append ( "b" ) . append ( "a" )
+    print_results ( "list . indexOf ( )",
+                    ( list . indexOf ( "a" )   = 1 ) AND
+                    ( list . indexOf ( "b" )   = 2 ) AND
+                    ( list . indexOf ( "x" )   = 0 ) AND
+                    ( list . indexOf ( EMPTY ) = 0 ) AND
+                    ( list . append ( EMPTY )
+                           . indexOf ( EMPTY ) = 4 )     )
+    
+    { join --------------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "a" ) . append ( "b" ) . append ( "c" )
+    print_results ( "list . join ( )",
+                    ( list . join ( ", " )  = "a, b, c" ) AND
+                    ( list . join ( ""   )  = "abc"     ) AND
+                    ( list . join ( EMPTY ) = "abc"     )     )
+
+    { lastIndexOf -------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "a" ) . append ( "b" ) . append ( "a" )
+    print_results ( "list . lastIndexOf ( )",
+                    ( list . lastIndexOf ( "a" )   = 3 ) AND
+                    ( list . lastIndexOf ( "b" )   = 2 ) AND
+                    ( list . lastIndexOf ( "x" )   = 0 ) AND
+                    ( list . lastIndexOf ( EMPTY ) = 0 ) AND
+                    ( list . append ( EMPTY )
+                           . lastIndexOf ( EMPTY ) = 4 )     )
+    
+    { peek --------------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    i = list . append ( "a" ) . append ( "b" ) . append ( "c" ) . peek ( )
+    j = list . peek ( )
+    list . append ( i )
+    print_results ( "list . peek ( )",
+                    ( i                  = "c"    ) AND
+                    ( j                  = "c"    ) AND
+                    ( list . length      = 4      ) AND
+                    ( list . join ( "" ) = "abcc" )     )
+
+    { pop ---------------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    i = list . append ( "a" ) . append ( "b" ) . append ( "c" ) . pop ( )
+    j = list . pop ( )
+    list . append ( i )
+    print_results ( "list . pop ( )",
+                    ( i                  = "c"  ) AND
+                    ( j                  = "b"  ) AND
+                    ( list . length      = 2    ) AND
+                    ( list . join ( "" ) = "ac" )     )
+
+    { push --------------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    list . push ( "x" )
+    list . push ( "y" ) . push ( "z" )
+    print_results ( "list . push ( )",
+                    ( list . length     = 3   ) AND
+                    ( list . data [ 1 ] = "x" ) AND
+                    ( list . data [ 2 ] = "y" ) AND
+                    ( list . data [ 3 ] = "z" )     )
+
+    { reverse -----------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "a" ) . append ( "b" ) . append ( "c" ) . append ( "d" )
+    list . reverse ( )
+    print_results ( "list . reverse ( )",
+                    ( list . length      = 4       ) AND
+                    ( list . join ( "" ) = "dcba"  ) AND
+                    ( list . append ( "x" )
+                           . join ( "" ) = "dcbax" ) AND
+                    ( list . reverse ( )
+                           . join ( "" ) = "xabcd" )     )
+
+    { set ---------------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "a" ) . append ( "b" )
+    list . set ( 1, "x" )
+    list . set ( 2, "y" ) . set ( EMPTY, "z" )
+    print_results ( "list . set ( )",
+                    ( list . length           = 3     ) AND
+                    ( list . get ( 1 )        = "x"   ) AND
+                    ( list . get ( 2 )        = "y"   ) AND
+                    ( list . get ( 3 )        = "z"   ) AND
+                    ( list . set ( 4, "foo" ) = EMPTY ) AND
+                    ( list . set ( 0, "foo" ) = EMPTY )     )
+
+    { slice -------------------------------------------------------------------}
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "1" ) . append ( "2" ) . append ( "3" ) . append ( "4" )
+         . append ( "5" ) . append ( "6" ) . append ( "7" ) . append ( "8" )
+    print_results ( "list . slice ( )",
+                    ( list . slice ( 2,     4     )
+                           . join ( "" ) = "23"       ) AND
+                    ( list . slice ( 4,     2     )
+                           . join ( "" ) = ""         ) AND
+                    ( list . slice ( -3,    EMPTY )
+                           . join ( "" ) = "678"      ) AND
+                    ( list . slice ( EMPTY, EMPTY )
+                           . join ( "" ) = "12345678" ) AND
+                    ( list . slice ( EMPTY, -3    )
+                           . join ( "" ) = "12345"    )     )
+
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE print_header
+
+LITERAL
+Test Report - LIB_LIST
+
+Passed  Function
+------  ------------------------------------------------------------------------
+$ENDLITERAL
+
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE print_results ( VALUE function, VALUE passed )
+
+LITERAL
+$passed $function_______________________________________________________________
+$ENDLITERAL
+
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE print_footer
+
+LITERAL
+
+End of test report.
+$ENDLITERAL
+
+ENDROUTINE
+
+{******************************************************************************}
+GLOBAL ROUTINE lib_list_define_list_class
+
+    DEFINE CLASS LIST_CLASS
+        INITIALISATION
+        PROPERTIES
+            "data",
+            "length"
+        ACTIONS
+        {*} "append",
+        {*} "clear",
+        {*} "concat", "append_array",
+        {*} "get",
+        {*} "in_bounds",
+        {*} "includes",
+        {*} "indexOf",
+        {*} "join",
+        {*} "lastIndexOf",
+        {*} "peek",
+        {*} "pop",
+        {*} "push",
+        {*} "reverse",
+        {*} "set",
+        {*} "shift",
+            "slice"
+    END CLASS
+
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_class_initialisation ( self )
+    self . clear ( )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_append ( self, VALUE val )
+    self . data [ self . length + 1 ] = val
+    self . length = self . length + 1
+    RETURN ( self )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_append_array ( self, arr )
+    DECLARE i, arr_size
+    i = 1
+    arr_size = size_of_array ( arr )
+
+    WHILE i <= arr_size DO
+        self . set ( EMPTY, arr [ i ] )
+        i = i + 1
+    ENDWHILE
+
+    RETURN ( self )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_clear ( self )
+    ARRAY self . data
+    self . length = 0
+    RETURN ( self )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_concat ( self, list )
+    DECLARE result
+    CREATE OBJECT LIST_CLASS, result
+    RETURN ( result . append_array ( self . data ) . append_array ( list . data ) )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_get ( self, VALUE i )
+    DECLARE result
+    result = EMPTY
+
+    IF self.in_bounds ( i ) THEN
+        result = self . data [ i ]
+    ENDIF
+
+    RETURN ( result )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_in_bounds ( self, VALUE i )
+    RETURN ( ( i != EMPTY ) AND ( i >= 1 ) AND ( i <= self . length ) )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_includes ( self, VALUE val )
+    RETURN ( self . indexOf ( val ) > 0 )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_indexOf ( self, VALUE val )
+    DECLARE i
+    i = 1
+
+    WHILE i <= self . length DO
+        IF self . get ( i ) = val THEN
+            RETURN ( i )
+        ENDIF
+        i = i + 1
+    ENDWHILE
+
+    RETURN ( 0 )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_join ( self, VALUE delim )
+    DECLARE result, i
+
+    IF delim = EMPTY THEN
+        result = self . join ( "" )
+    ELSE
+        result = ""
+        i = 1
+        WHILE i <= self . length DO
+            result = result : self . get ( i )
+            IF i < self . length THEN
+                result = result : delim
+            ENDIF
+            i = i + 1
+        ENDWHILE
+    ENDIF
+    
+    RETURN ( result )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_lastIndexOf ( self, VALUE val )
+    DECLARE i
+    i = self . length
+
+    WHILE i >= 1 DO
+        IF self . get ( i ) = val THEN
+            RETURN ( i )
+        ENDIF
+        i = i - 1
+    ENDWHILE
+
+    RETURN ( 0 )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_peek ( self )
+    RETURN ( self . get ( self . length ) )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_pop ( self )
+    DECLARE result
+    result = self . get ( self . length )
+    array_remove_slice ( self . data, 1, self . length )
+    self . length = self . length - 1
+    RETURN ( result )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_push ( self, VALUE val )
+    RETURN ( self . append ( val ) )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_reverse ( self )
+
+    DECLARE middle, i, temp
+
+    middle = TRUNC ( self . length / 2 )
+    i = 1
+    WHILE i <= middle DO
+        temp = self . get ( i )
+        self . set ( i, self . get ( self . length - ( i - 1 ) ) )
+        self . set ( self . length - ( i - 1 ), temp )
+        i = i + 1
+    ENDWHILE
+
+    RETURN ( self )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_set ( self, VALUE i, VALUE val )
+    DECLARE result
+    result = self
+
+    IF self . in_bounds ( i ) THEN
+        self . data [ i ] = val
+    ELSEIF i = EMPTY THEN
+        self . append ( val )
+    ELSE
+        result = EMPTY
+    ENDIF
+
+    RETURN ( result )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_shift ( self )
+    DECLARE result
+    result = self . get ( 1 )
+    array_remove_slice ( self . data, 1, 1 )
+    self . length = self . length - 1
+    RETURN ( result )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_slice ( self, VALUE n, VALUE m )
+    DECLARE result, i, step
+
+    { check n }
+    IF n = EMPTY THEN
+        n = 1
+    ELSEIF n < 1 THEN
+        n = self . length + n + 1
+    ENDIF
+
+    { check m }
+    IF m = EMPTY THEN
+        m = self . length + 1
+    ELSEIF m < 1 THEN
+        m = self . length + m + 1
+    ENDIF
+
+    CREATE OBJECT LIST_CLASS, result
+    i = n
+
+    WHILE self . in_bounds ( i ) AND ( i < m ) DO
+        result . append ( self . get ( i ) )
+        i = i + 1
+    ENDWHILE
+
+    RETURN ( result )
+ENDROUTINE
+
+{******************************************************************************}
