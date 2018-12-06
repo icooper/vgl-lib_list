@@ -1,7 +1,37 @@
-# vgl-lib_list
-List object for VGL
+# LIB_LIST
+
+I've created this library as a wrapper around the native array datatype available in VGL. The functions and parameters are modeled after JavaScript's built-in `Array` object.
+
+## Usage
+
+Simply join the library to your VGL program and run `lib_list_define_list_class ( )` before using the class. Simple example:
+
+```vgl
+JOIN LIBRARY lib_list
+
+DECLARE plants, animals
+
+lib_list_define_list_class ( )
+CREATE OBJECT LIST_CLASS, plants
+
+plants . push ( "oak tree" ) . push ( "mouse" ) . push ( "tulip" )
+animals = plants . splice ( 2, 1 ) . push ( "cat" ) . reverse ( )
+
+{
+    plants = [ oak tree, tulip ]
+    animals = [ cat, mouse ]
+}
+```
+
+## Limitations
+
+* No functions like `map`, `filter`, or `reduce` which take a function as a parameter.
+* No `sort`, but you can use the built-in `array_sort ( )` in `STD_ARRAY` on the `list . data` property.
+* Changes to `list . data` should be accompanied by an update to `list . length` if applicable.
 
 ## Test Report
+
+If you run `lib_list` with no routine specified, it will execute the test suite and display this table (in Markdown format):
 
 | Function                     | Result     | Details                                                                  |
 |------------------------------|------------|--------------------------------------------------------------------------|
@@ -112,4 +142,3 @@ List object for VGL
 |                              | _OK_       | `list . unshift ( ) = b`                                                 |
 |                              | _OK_       | `list . toString ( ) = [c]`                                              |
 |                              | _OK_       | `list . clear ( ) . unshift ( ) = EMPTY`                                 |
-
