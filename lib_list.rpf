@@ -25,190 +25,250 @@ FLUSHLITERAL
 {******************************************************************************}
 GLOBAL ROUTINE lib_list_test_list_class
 
+    SET NAME "DISPLAY/"
+    SET WIDTH 80
+    SET LENGTH 999999
+    
     DECLARE list, i, j
 
-    SET NAME "DISPLAY/"
     print_header ( )
 
-    { define class ------------------------------------------------------------}
-    lib_list_define_list_class ( )
-    print_results ( "define class", TRUE )
-
     { create object -----------------------------------------------------------}
+    print_results_section ( "create object" )
+    lib_list_define_list_class ( )
     CREATE OBJECT LIST_CLASS, list
-    print_results ( "create object", TRUE )
+    print_results ( "( list != EMPTY )", ( list != EMPTY ), TRUE )
 
     { class initialisation ----------------------------------------------------}
+    print_results_section ( "class initialisation" )
     CREATE OBJECT LIST_CLASS, list
-    print_results ( "class initialisation",
-                    ( list . length = 0 ) AND
-                    ( size_of_array ( list . data ) = 0 ) )
+    print_results ( "list . length",
+                    list . length, 0 )
+    print_results ( "size_of_array ( list . data )",
+                     size_of_array ( list . data ), 0 )
                     
     { append ------------------------------------------------------------------}
+    print_results_section ( "append" )
     CREATE OBJECT LIST_CLASS, list
-    list . append ( "x" )
-    list . append ( "y" ) . append ( "z" )
-    print_results ( "list . append ( )",
-                    ( list . length     = 3   ) AND
-                    ( list . data [ 1 ] = "x" ) AND
-                    ( list . data [ 2 ] = "y" ) AND
-                    ( list . data [ 3 ] = "z" )     )
+    print_results ( "list . toString ( )", list . toString ( ), "[]" )
+    print_results ( "list . append ( 'x' ) . toString ( )",
+                     list . append ( "x" ) . toString ( ),
+                    "[x]" )
+    print_results ( "list . append ( 'y' ) . append ( 'z' ) .toString ( )",
+                     list . append ( "y" ) . append ( "z" ) .toString ( ),
+                    "[x,y,z]" )
 
     { clear -------------------------------------------------------------------}
+    print_results_section ( "clear" )
     CREATE OBJECT LIST_CLASS, list
-    print_results ( "list . clear ( )",
-                    ( list . length                  = 0 ) AND
-                    ( size_of_array ( list . data )  = 0 ) AND 
-                    ( list . append ( "a" ) . length = 1 )     )
+    list . append ( "x" ) . append ( "y" ) . append ( "z" )
+    print_results ( "list . toString ( )", list . toString ( ), "[x,y,z]" )
+    print_results ( "list . clear ( ) . length", list . clear ( ) . length, 0 )
+    print_results ( "list . toString ( )", list . toString ( ), "[]" )
 
     { concat ------------------------------------------------------------------}
-    CREATE OBJECT LIST_CLASS, list
+    print_results_section ( "concat" )
     CREATE OBJECT LIST_CLASS, i
-    list . append ( "a" ) . append ( "b" )
-    i    . append ( "x" ) . append ( "y" )
-    j = list . concat ( i )
-    print_results ( "list . concat ( )",
-                    ( list  . length     = 2   ) AND
-                    ( i     . length     = 2   ) AND
-                    ( j     . length     = 4   ) AND
-                    ( j     . data [ 1 ] = "a" ) AND
-                    ( j     . data [ 2 ] = "b" ) AND
-                    ( j     . data [ 3 ] = "x" ) AND
-                    ( j     . data [ 4 ] = "y" )     )
+    CREATE OBJECT LIST_CLASS, j
+    i . append ( "a" ) . append ( "b" )
+    j . append ( "x" ) . append ( "y" )
+    print_results ( "i . toString ( )", i . toString ( ), "[a,b]" )
+    print_results ( "j . toString ( )", j . toString ( ), "[x,y]" )
+    print_results ( "i . concat ( j ) . toString ( )",
+                     i . concat ( j ) . toString ( ), "[a,b,x,y]" )
+
+    { copy --------------------------------------------------------------------}
+    print_results_section ( "copy" )
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "x" ) . append ( "y" )
+    print_results ( "list . toString ( )", list . toString ( ), "[x,y]" )
+    i = list . copy ( )
+    print_results ( "i = list . copy ( ); i . toString ( )",
+                     i . toString ( ), "[x,y]" )
+    i . pop ( )
+    print_results ( "i . pop ( ); i . toString ( )",
+                     i . toString ( ), "[x]" )
+    print_results ( "list . toString ( )", list . toString ( ), "[x,y]" )
 
     { get ---------------------------------------------------------------------}
+    print_results_section ( "get" )
     CREATE OBJECT LIST_CLASS, list
     list . append ( "a" ) . append ( "b" )
-    print_results ( "list . get ( )",
-                    ( list . get ( 0 ) = EMPTY ) AND
-                    ( list . get ( 1 ) = "a"   ) AND
-                    ( list . get ( 2 ) = "b"   ) AND
-                    ( list . get ( 3 ) = EMPTY )     )
+    print_results ( "list . toString ( )", list . toString ( ), "[a,b]" )
+    print_results ( "list . get ( 0 )", list . get ( 0 ), EMPTY )
+    print_results ( "list . get ( 1 )", list . get ( 1 ), "a" )
+    print_results ( "list . get ( 2 )", list . get ( 2 ), "b" )
+    print_results ( "list . get ( 3 )", list . get ( 3 ), EMPTY )
 
-    { in_bounds ---------------------------------------------------------------}
+    { inBounds ---------------------------------------------------------------}
+    print_results_section ( "inBounds" )
     CREATE OBJECT LIST_CLASS, list
     list . append ( "a" ) . append ( "b" )
-    print_results ( "list . in_bounds ( )",
-                    ( list . in_bounds ( 0 )     = FALSE ) AND
-                    ( list . in_bounds ( 1 )     = TRUE  ) AND
-                    ( list . in_bounds ( 2 )     = TRUE  ) AND
-                    ( list . in_bounds ( 3 )     = FALSE ) AND
-                    ( list . in_bounds ( EMPTY ) = FALSE ) AND
-                    ( list . in_bounds ( "xyz" ) = FALSE )     )
+    print_results ( "list . toString ( )", list . toString ( ), "[a,b]" )
+    print_results ( "list . inBounds ( 0 )", list . inBounds ( 0 ), FALSE )
+    print_results ( "list . inBounds ( 1 )", list . inBounds ( 1 ), TRUE )
+    print_results ( "list . inBounds ( 2 )", list . inBounds ( 2 ), TRUE )
+    print_results ( "list . inBounds ( 3 )", list . inBounds ( 3 ), FALSE )
+    print_results ( "list . inBounds ( EMPTY )",
+                     list . inBounds ( EMPTY ), FALSE )
+    print_results ( "list . inBounds ( 'xyz' )",
+                     list . inBounds ( "xyz" ), FALSE )
 
     { includes ----------------------------------------------------------------}
+    print_results_section ( "includes" )
     CREATE OBJECT LIST_CLASS, list
     list . append ( "a" ) . append ( "b" )
-    print_results ( "list . includes ( )",
-                    ( list . includes ( "a" )   = TRUE  ) AND
-                    ( list . includes ( "b" )   = TRUE  ) AND
-                    ( list . includes ( "x" )   = FALSE ) AND
-                    ( list . includes ( EMPTY ) = FALSE ) AND
-                    ( list . append ( EMPTY )
-                           . includes ( EMPTY ) = TRUE  )     )
+    print_results ( "list . toString ( )", list . toString ( ), "[a,b]" )
+    print_results ( "list . includes ( 'a' )", list . includes ( "a" ), TRUE )
+    print_results ( "list . includes ( 'b' )", list . includes ( "b" ), TRUE )
+    print_results ( "list . includes ( 'x' )", list . includes ( "x" ), FALSE )
+    print_results ( "list . includes ( EMPTY )",
+                     list . includes ( EMPTY ), FALSE )
+    print_results ( "list . append ( EMPTY ) . includes ( EMPTY )",
+                     list . append ( EMPTY ) . includes ( EMPTY ), TRUE )
 
     { indexOf -----------------------------------------------------------------}
+    print_results_section ( "indexOf" )
     CREATE OBJECT LIST_CLASS, list
     list . append ( "a" ) . append ( "b" ) . append ( "a" )
-    print_results ( "list . indexOf ( )",
-                    ( list . indexOf ( "a" )   = 1 ) AND
-                    ( list . indexOf ( "b" )   = 2 ) AND
-                    ( list . indexOf ( "x" )   = 0 ) AND
-                    ( list . indexOf ( EMPTY ) = 0 ) AND
-                    ( list . append ( EMPTY )
-                           . indexOf ( EMPTY ) = 4 )     )
+    print_results ( "list . toString ( )", list . toString ( ), "[a,b,a]" )
+    print_results ( "list . indexOf ( 'a' )", list . indexOf ( "a" ), 1 )
+    print_results ( "list . indexOf ( 'b' )", list . indexOf ( "b" ), 2 )
+    print_results ( "list . indexOf ( 'x' )", list . indexOf ( "x" ), 0 )
+    print_results ( "list . indexOf ( EMPTY )", list . indexOf ( EMPTY ), 0 )
+    print_results ( "list . append ( EMPTY ) . indexOf ( EMPTY )",
+                     list . append ( EMPTY ) . indexOf ( EMPTY ), 4 )
     
     { join --------------------------------------------------------------------}
+    print_results_section ( "join" )
     CREATE OBJECT LIST_CLASS, list
     list . append ( "a" ) . append ( "b" ) . append ( "c" )
-    print_results ( "list . join ( )",
-                    ( list . join ( ", " )  = "a, b, c" ) AND
-                    ( list . join ( ""   )  = "abc"     ) AND
-                    ( list . join ( EMPTY ) = "abc"     )     )
+    print_results ( "list . toString ( )", list . toString ( ), "[a,b,c]" )
+    print_results ( "list . join ( ', ' )", list . join ( ", " ), "a, b, c" )
+    print_results ( "list . join ( '' )", list . join ( "" ), "abc" )
+    print_results ( "list . join ( EMPTY )", list . join ( EMPTY ), "abc" )
 
     { lastIndexOf -------------------------------------------------------------}
+    print_results_section ( "lastIndexOf" )
     CREATE OBJECT LIST_CLASS, list
     list . append ( "a" ) . append ( "b" ) . append ( "a" )
-    print_results ( "list . lastIndexOf ( )",
-                    ( list . lastIndexOf ( "a" )   = 3 ) AND
-                    ( list . lastIndexOf ( "b" )   = 2 ) AND
-                    ( list . lastIndexOf ( "x" )   = 0 ) AND
-                    ( list . lastIndexOf ( EMPTY ) = 0 ) AND
-                    ( list . append ( EMPTY )
-                           . lastIndexOf ( EMPTY ) = 4 )     )
+    print_results ( "list . toString ( )", list . toString ( ), "[a,b,a]" )
+    print_results ( "list . lastIndexOf ( 'a' )",
+                     list . lastIndexOf ( "a" ), 3 )
+    print_results ( "list . lastIndexOf ( 'b' )",
+                     list . lastIndexOf ( "b" ), 2 )
+    print_results ( "list . lastIndexOf ( 'x' )",
+                     list . lastIndexOf ( "x" ), 0 )
+    print_results ( "list . lastIndexOf ( EMPTY )",
+                     list . lastIndexOf ( EMPTY ), 0 )
+    print_results ( "list . append ( EMPTY ) . lastIndexOf ( EMPTY )",
+                     list . append ( EMPTY ) . lastIndexOf ( EMPTY ), 4 )
     
-    { peek --------------------------------------------------------------------}
-    CREATE OBJECT LIST_CLASS, list
-    i = list . append ( "a" ) . append ( "b" ) . append ( "c" ) . peek ( )
-    j = list . peek ( )
-    list . append ( i )
-    print_results ( "list . peek ( )",
-                    ( i                  = "c"    ) AND
-                    ( j                  = "c"    ) AND
-                    ( list . length      = 4      ) AND
-                    ( list . join ( "" ) = "abcc" )     )
-
     { pop ---------------------------------------------------------------------}
+    print_results_section ( "pop" )
     CREATE OBJECT LIST_CLASS, list
-    i = list . append ( "a" ) . append ( "b" ) . append ( "c" ) . pop ( )
-    j = list . pop ( )
-    list . append ( i )
-    print_results ( "list . pop ( )",
-                    ( i                  = "c"  ) AND
-                    ( j                  = "b"  ) AND
-                    ( list . length      = 2    ) AND
-                    ( list . join ( "" ) = "ac" )     )
+    list . append ( "a" ) . append ( "b" ) . append ( "c" )
+    print_results ( "list . toString ( )", list . toString ( ), "[a,b,c]" )
+    print_results ( "list . pop ( )", list . pop ( ), "c" )
+    print_results ( "list . pop ( )", list . pop ( ), "b" )
+    print_results ( "list . toString ( )", list . toString ( ), "[a]" )
+    print_results ( "list . clear ( ) . pop ( )",
+                     list . clear ( ) . pop ( ), EMPTY )
 
     { push --------------------------------------------------------------------}
+    print_results_section ( "push" )
     CREATE OBJECT LIST_CLASS, list
-    list . push ( "x" )
-    list . push ( "y" ) . push ( "z" )
-    print_results ( "list . push ( )",
-                    ( list . length     = 3   ) AND
-                    ( list . data [ 1 ] = "x" ) AND
-                    ( list . data [ 2 ] = "y" ) AND
-                    ( list . data [ 3 ] = "z" )     )
+    print_results ( "list . toString ( )", list . toString ( ), "[]" )
+    print_results ( "list . push ( 'x' ) . toString ( )",
+                     list . push ( "x" ) . toString ( ),
+                    "[x]" )
+    print_results ( "list . push ( 'y' ) . push ( 'z' ) .toString ( )",
+                     list . push ( "y" ) . push ( "z" ) .toString ( ),
+                    "[x,y,z]" )
 
     { reverse -----------------------------------------------------------------}
+    print_results_section ( "reverse" )
     CREATE OBJECT LIST_CLASS, list
     list . append ( "a" ) . append ( "b" ) . append ( "c" ) . append ( "d" )
-    list . reverse ( )
-    print_results ( "list . reverse ( )",
-                    ( list . length      = 4       ) AND
-                    ( list . join ( "" ) = "dcba"  ) AND
-                    ( list . append ( "x" )
-                           . join ( "" ) = "dcbax" ) AND
-                    ( list . reverse ( )
-                           . join ( "" ) = "xabcd" )     )
+    print_results ( "list . toString ( )", list . toString ( ), "[a,b,c,d]" )
+    print_results ( "list . reverse ( ) . toString ( )",
+                     list . reverse ( ) . toString ( ), "[d,c,b,a]" )
+    print_results ( "list . append ( 'x' ) . toString ( )",
+                     list . append ( "x" ) . toString ( ), "[d,c,b,a,x]" )
+    print_results ( "list . reverse ( ) . toString ( )",
+                     list . reverse ( ) . toString ( ), "[x,a,b,c,d]" )
 
     { set ---------------------------------------------------------------------}
+    print_results_section ( "set" )
     CREATE OBJECT LIST_CLASS, list
     list . append ( "a" ) . append ( "b" )
-    list . set ( 1, "x" )
-    list . set ( 2, "y" ) . set ( EMPTY, "z" )
-    print_results ( "list . set ( )",
-                    ( list . length           = 3     ) AND
-                    ( list . get ( 1 )        = "x"   ) AND
-                    ( list . get ( 2 )        = "y"   ) AND
-                    ( list . get ( 3 )        = "z"   ) AND
-                    ( list . set ( 4, "foo" ) = EMPTY ) AND
-                    ( list . set ( 0, "foo" ) = EMPTY )     )
+    print_results ( "list . toString ( )", list . toString ( ), "[a,b]" )
+    print_results ( "list . set ( 1, 'x' ) . toString ( )",
+                     list . set ( 1, "x" ) . toString ( ), "[x,b]" )
+    print_results ( "list . set ( 2, 'y' ) . toString ( )",
+                     list . set ( 2, "y" ) . toString ( ), "[x,y]" )
+    print_results ( "list . set ( EMPTY, 'z' ) . toString ( )",
+                     list . set ( EMPTY, "z" ) . toString ( ), "[x,y,z]" )
+    print_results ( "list . set ( 0, 'foo' )", list . set ( 0, "foo" ), EMPTY )
+    print_results ( "list . set ( 4, 'foo' )", list . set ( 4, "foo" ), EMPTY )
 
     { slice -------------------------------------------------------------------}
+    print_results_section ( "slice" )
     CREATE OBJECT LIST_CLASS, list
     list . append ( "1" ) . append ( "2" ) . append ( "3" ) . append ( "4" )
          . append ( "5" ) . append ( "6" ) . append ( "7" ) . append ( "8" )
-    print_results ( "list . slice ( )",
-                    ( list . slice ( 2,     4     )
-                           . join ( "" ) = "23"       ) AND
-                    ( list . slice ( 4,     2     )
-                           . join ( "" ) = ""         ) AND
-                    ( list . slice ( -3,    EMPTY )
-                           . join ( "" ) = "678"      ) AND
-                    ( list . slice ( EMPTY, EMPTY )
-                           . join ( "" ) = "12345678" ) AND
-                    ( list . slice ( EMPTY, -3    )
-                           . join ( "" ) = "12345"    )     )
+    print_results ( "list . toString ( )",
+                     list . toString ( ), "[1,2,3,4,5,6,7,8]" )
+    print_results ( "list . slice ( 2, 4 ) . toString ( )",
+                     list . slice ( 2, 4 ) . toString ( ), "[2,3]" )
+    print_results ( "list . slice ( 4, 2 ) . toString ( )",
+                     list . slice ( 4, 2 ) . toString ( ), "[]" )
+    print_results ( "list . slice ( -3, EMPTY ) . toString ( )",
+                     list . slice ( -3, EMPTY ) . toString ( ), "[6,7,8]" )
+    print_results ( "list . slice ( EMPTY, EMPTY ) . toString ( )",
+                     list . slice ( EMPTY, EMPTY ) . toString ( ),
+                    "[1,2,3,4,5,6,7,8]" )
+    print_results ( "list . slice ( EMPTY, -3 ) . toString ( )",
+                     list . slice ( EMPTY, -3 ) . toString ( ),
+                    "[1,2,3,4,5]" )
+
+    { splice ------------------------------------------------------------------}
+    print_results_section ( "splice" )
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "1" ) . append ( "2" ) . append ( "3" ) . append ( "4" )
+         . append ( "5" ) . append ( "6" ) . append ( "7" ) . append ( "8" )
+    print_results ( "list . toString ( )",
+                     list . toString ( ), "[1,2,3,4,5,6,7,8]" )
+    print_results ( "list . copy ( ) . splice ( 3, 2 ) . toString ( )",
+                     list . copy ( ) . splice ( 3, 2 ) . toString ( ), "[3,4]" )
+    print_results ( "list . copy ( ) . splice ( 5, 100 ) . toString ( )",
+                     list . copy ( ) . splice ( 5, 100 ) . toString ( ),
+                    "[5,6,7,8]" )
+    print_results ( "list . splice ( -5, 4 ) . toString ( )",
+                     list . splice ( -5, 4 ) . toString ( ),
+                    "[4,5,6,7]" )
+    print_results ( "list . toString ( )", list . toString ( ), "[1,2,3,8]" )
+
+    { toString ----------------------------------------------------------------}
+    print_results_section ( "toString" )
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "1" ) . append ( "2" ) . append ( "3" )
+    print_results ( "list . toString ( )", list . toString ( ), "[1,2,3]" )
+    print_results ( "list . clear ( ) . append ( '1' ) . toString ( )",
+                     list . clear ( ) . append ( "1" ) . toString ( ), "[1]" )
+    print_results ( "list . clear ( ) . toString ( )",
+                     list . clear ( ) . toString ( ), "[]" )
+
+    { unshift -----------------------------------------------------------------}
+    print_results_section ( "unshift" )
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "a" ) . append ( "b" ) . append ( "c" )
+    print_results ( "list . toString ( )", list . toString ( ), "[a,b,c]" )
+    print_results ( "list . unshift ( )", list . unshift ( ), "a" )
+    print_results ( "list . unshift ( )", list . unshift ( ), "b" )
+    print_results ( "list . toString ( )", list . toString ( ), "[c]" )
+    print_results ( "list . clear ( ) . unshift ( )",
+                     list . clear ( ) . unshift ( ), EMPTY )
 
 ENDROUTINE
 
@@ -224,11 +284,38 @@ $ENDLITERAL
 
 ENDROUTINE
 
+ROUTINE print_foo ( VALUE a, VALUE b )
+ENDROUTINE
+
 {******************************************************************************}
-ROUTINE print_results ( VALUE function, VALUE passed )
+ROUTINE print_results_section ( VALUE title )
 
 LITERAL
-$passed $function_______________________________________________________________
+        $title__________________________________________________________________
+$ENDLITERAL
+
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE print_results ( VALUE function, VALUE expr, VALUE expected )
+
+    DECLARE line, passed
+
+    IF expr != EMPTY THEN
+        line = STRIP ( function ) : " = " : STRIP ( expr )
+    ELSE
+        line = STRIP ( function ) : " = EMPTY"
+    ENDIF
+    
+    IF expr = expected THEN 
+        passed = "OK"
+    ELSE
+        passed = "FAILED"
+        line = line : "; expected " : STRIP ( expected )
+    ENDIF
+
+LITERAL
+$passed   $line_________________________________________________________________
 $ENDLITERAL
 
 ENDROUTINE
@@ -249,25 +336,28 @@ GLOBAL ROUTINE lib_list_define_list_class
     DEFINE CLASS LIST_CLASS
         INITIALISATION
         PROPERTIES
-            "data",
-            "length"
+            "data",    { for read-only purposes }
+            "length"   { for read-only purposes }
         ACTIONS
         {*} "append",
         {*} "clear",
         {*} "concat", "append_array",
+	{*} "copy",
         {*} "get",
-        {*} "in_bounds",
+        {*} "inBounds",
         {*} "includes",
         {*} "indexOf",
         {*} "join",
         {*} "lastIndexOf",
-        {*} "peek",
         {*} "pop",
         {*} "push",
         {*} "reverse",
         {*} "set",
         {*} "shift",
-            "slice"
+        {*} "slice",
+        {*} "splice",
+        {*} "toString",
+        {*} "unshift"
     END CLASS
 
 ENDROUTINE
@@ -309,7 +399,13 @@ ENDROUTINE
 ROUTINE list_action_concat ( self, list )
     DECLARE result
     CREATE OBJECT LIST_CLASS, result
-    RETURN ( result . append_array ( self . data ) . append_array ( list . data ) )
+    RETURN ( result . append_array ( self . data )
+                    . append_array ( list . data ) )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_copy ( self )
+    RETURN ( self . slice ( EMPTY, EMPTY ) )
 ENDROUTINE
 
 {******************************************************************************}
@@ -317,7 +413,7 @@ ROUTINE list_action_get ( self, VALUE i )
     DECLARE result
     result = EMPTY
 
-    IF self.in_bounds ( i ) THEN
+    IF self.inBounds ( i ) THEN
         result = self . data [ i ]
     ENDIF
 
@@ -325,7 +421,7 @@ ROUTINE list_action_get ( self, VALUE i )
 ENDROUTINE
 
 {******************************************************************************}
-ROUTINE list_action_in_bounds ( self, VALUE i )
+ROUTINE list_action_inBounds ( self, VALUE i )
     RETURN ( ( i != EMPTY ) AND ( i >= 1 ) AND ( i <= self . length ) )
 ENDROUTINE
 
@@ -386,16 +482,17 @@ ROUTINE list_action_lastIndexOf ( self, VALUE val )
 ENDROUTINE
 
 {******************************************************************************}
-ROUTINE list_action_peek ( self )
-    RETURN ( self . get ( self . length ) )
-ENDROUTINE
-
-{******************************************************************************}
 ROUTINE list_action_pop ( self )
     DECLARE result
-    result = self . get ( self . length )
-    array_remove_slice ( self . data, 1, self . length )
-    self . length = self . length - 1
+
+    IF self . length = 0 THEN
+        result = EMPTY
+    ELSE
+        result = self . get ( self . length )
+        array_remove_slice ( self . data, 1, self . length )
+        self . length = self . length - 1
+    ENDIF
+
     RETURN ( result )
 ENDROUTINE
 
@@ -426,7 +523,7 @@ ROUTINE list_action_set ( self, VALUE i, VALUE val )
     DECLARE result
     result = self
 
-    IF self . in_bounds ( i ) THEN
+    IF self . inBounds ( i ) THEN
         self . data [ i ] = val
     ELSEIF i = EMPTY THEN
         self . append ( val )
@@ -448,13 +545,16 @@ ENDROUTINE
 
 {******************************************************************************}
 ROUTINE list_action_slice ( self, VALUE n, VALUE m )
-    DECLARE result, i, step
+    DECLARE result, i
 
     { check n }
     IF n = EMPTY THEN
         n = 1
     ELSEIF n < 1 THEN
         n = self . length + n + 1
+        IF n < 1 THEN
+            n = 1
+        ENDIF
     ENDIF
 
     { check m }
@@ -462,15 +562,80 @@ ROUTINE list_action_slice ( self, VALUE n, VALUE m )
         m = self . length + 1
     ELSEIF m < 1 THEN
         m = self . length + m + 1
+        IF m < 1 THEN
+            m = 1
+        ENDIF
     ENDIF
 
     CREATE OBJECT LIST_CLASS, result
     i = n
 
-    WHILE self . in_bounds ( i ) AND ( i < m ) DO
+    WHILE self . inBounds ( i ) AND ( i < m ) DO
         result . append ( self . get ( i ) )
         i = i + 1
     ENDWHILE
+
+    RETURN ( result )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_splice ( self, VALUE n, VALUE m )
+    DECLARE result, i
+
+    { check n }
+    IF n > self . length THEN
+        n = self . length
+    ELSEIF n < 1 THEN
+        n = self . length + n + 1
+        IF n < 1 THEN
+            n = 1
+        ENDIF
+    ENDIF
+
+    { check m }
+    IF m > self . length - n + 1 THEN
+        m = self . length - n + 1
+    ELSEIF m < 0 THEN
+        m = 0
+    ENDIF
+
+    CREATE OBJECT LIST_CLASS, result
+    i = n
+
+    WHILE self . inBounds ( n ) AND ( i < m + n ) DO
+        result . append ( self . get ( n ) )
+        array_remove_slice ( self . data, 1, n )
+        self . length = self . length - 1
+        i = i + 1
+    ENDWHILE
+
+    RETURN ( result )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_toString ( self )
+    DECLARE result
+
+    IF ( self . length = 0 ) THEN
+        result = "[]"
+    ELSE
+        result = "[" : self . join ( "," ) : "]"
+    ENDIF
+
+    RETURN ( result )
+ENDROUTINE
+
+{******************************************************************************}
+ROUTINE list_action_unshift ( self )
+    DECLARE result
+    
+    IF self . length = 0 THEN
+        result = EMPTY
+    ELSE
+        result = self . get ( 1 )
+        array_remove_slice ( self . data, 1, 1 )
+        self . length = self . length - 1
+    ENDIF
 
     RETURN ( result )
 ENDROUTINE
