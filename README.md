@@ -149,4 +149,4 @@ Pull requests welcome.
 
 ## Licensing
 
-This work is licensed under the MIT license---[here's what this means](https://choosealicense.com/licenses/mit/).
+This work is licensed under the MIT license--[here's what this means](https://choosealicense.com/licenses/mit/).
