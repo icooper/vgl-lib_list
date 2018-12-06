@@ -23,6 +23,8 @@ animals = plants . splice ( 2, 1 ) . push ( "cat" ) . reverse ( )
 }
 ```
 
+You can see the different class actions available in the [Test Report](#test-report) section below.
+
 ## Limitations
 
 * No functions like `map`, `filter`, or `reduce` which take a function as a parameter.
