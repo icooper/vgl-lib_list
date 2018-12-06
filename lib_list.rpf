@@ -1,4 +1,4 @@
-{***
+{*******************************************************************************
 *
 * lib_list.rpf
 *
@@ -6,15 +6,14 @@
 * indicies to be consistent with VGL arrays.
 *
 * Ian Cooper
-* 05 Dec 2018
+* 05 December 2018
 *
-***}
+*******************************************************************************}
 
 ENABLE WINDOWS
 SET NAME "DEFER/"
 
 JOIN STANDARD_LIBRARY STD_ARRAY
-JOIN LIBRARY $lib_utils
 
 GLOBAL CONSTANT LIST_CLASS = "LIST"
 
