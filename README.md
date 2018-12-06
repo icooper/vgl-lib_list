@@ -142,3 +142,11 @@ If you run `lib_list` with no routine specified, it will execute the test suite 
 |                              | _OK_       | `list . unshift ( ) = b`                                                 |
 |                              | _OK_       | `list . toString ( ) = [c]`                                              |
 |                              | _OK_       | `list . clear ( ) . unshift ( ) = EMPTY`                                 |
+
+## Contributions
+
+Pull requests welcome.
+
+## Licensing
+
+This work is licensed under the MIT license---[here's what this means](https://choosealicense.com/licenses/mit/).
