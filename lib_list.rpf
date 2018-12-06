@@ -360,11 +360,11 @@ GLOBAL ROUTINE lib_list_define_list_class
         PROPERTIES
             "data",    { for read-only purposes }
             "length"   { for read-only purposes }
-        ACTIONS
+        ACTIONS        { * indicates that it's covered by the test suite }
         {*} "append",
         {*} "clear",
         {*} "concat", "append_array",
-	{*} "copy",
+        {*} "copy",
         {*} "get",
         {*} "inBounds",
         {*} "includes",
