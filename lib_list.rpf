@@ -25,10 +25,6 @@ FLUSHLITERAL
 {******************************************************************************}
 GLOBAL ROUTINE lib_list_test_list_class
 
-    SET NAME "DISPLAY/"
-    SET WIDTH 80
-    SET LENGTH 999999
-    
     DECLARE list, i, j
 
     print_header ( )
@@ -275,11 +271,15 @@ ENDROUTINE
 {******************************************************************************}
 ROUTINE print_header
 
+    SET NAME "DISPLAY/"
+    SET WIDTH 120
+    SET LENGTH 999999
+    
 LITERAL
-Test Report - LIB_LIST
+## Test Report
 
-Passed  Function
-------  ------------------------------------------------------------------------
+| Function                     | Result     | Details                                                                  |
+|------------------------------|------------|--------------------------------------------------------------------------|
 $ENDLITERAL
 
 ENDROUTINE
@@ -291,7 +291,7 @@ ENDROUTINE
 ROUTINE print_results_section ( VALUE title )
 
 LITERAL
-        $title__________________________________________________________________
+| $title______________________ |            |                                                                          |
 $ENDLITERAL
 
 ENDROUTINE
@@ -302,20 +302,20 @@ ROUTINE print_results ( VALUE function, VALUE expr, VALUE expected )
     DECLARE line, passed
 
     IF expr != EMPTY THEN
-        line = STRIP ( function ) : " = " : STRIP ( expr )
+        line = "`" : STRIP ( function ) : " = " : STRIP ( expr ) : "`"
     ELSE
-        line = STRIP ( function ) : " = EMPTY"
+        line = "`" : STRIP ( function ) : " = EMPTY`"
     ENDIF
     
     IF expr = expected THEN 
-        passed = "OK"
+        passed = "_OK_"
     ELSE
-        passed = "FAILED"
+        passed = "**FAILED**"
         line = line : "; expected " : STRIP ( expected )
     ENDIF
 
 LITERAL
-$passed   $line_________________________________________________________________
+|                              | $passed___ | $line___________________________________________________________________ |
 $ENDLITERAL
 
 ENDROUTINE
@@ -325,7 +325,7 @@ ROUTINE print_footer
 
 LITERAL
 
-End of test report.
+_End of test report._
 $ENDLITERAL
 
 ENDROUTINE
