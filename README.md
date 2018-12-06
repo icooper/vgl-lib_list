@@ -1,4 +1,4 @@
-# LIB_LIST
+# lib_list.rpf
 
 I've created this library as a wrapper around the native array datatype available in VGL. The functions and parameters are modeled after JavaScript's built-in `Array` object.
 
