@@ -305,9 +305,6 @@ $ENDLITERAL
 
 ENDROUTINE
 
-ROUTINE print_foo ( VALUE a, VALUE b )
-ENDROUTINE
-
 {******************************************************************************}
 ROUTINE print_results_section ( VALUE title )
 
