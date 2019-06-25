@@ -4,7 +4,7 @@ I've created this library as a wrapper around the native array datatype availabl
 
 ## Usage
 
-Simply join the library to your VGL program and run `lib_list_define_list_class ( )` before using the class. There are no external dependencies, only the standard library `STD_ARRAY`. Here's a simple usage example:
+Simply join the library to your VGL program and run `lib_list_define_list_class()` before using the class. There are no external dependencies, only the standard library `STD_ARRAY`. Here's a simple usage example:
 
 ```vgl
 JOIN LIBRARY lib_list
@@ -29,8 +29,8 @@ You can see the different class actions available in the [Test Report](#test-rep
 ## Limitations
 
 * No functions like `map`, `filter`, or `reduce` which take a function as a parameter.
-* No `sort`, but you can use the built-in `array_sort ( )` in `STD_ARRAY` on the `list . data` property.
-* Changes to `list . data` should be accompanied by an update to `list . length` if applicable.
+* No `sort`, but you can use the built-in `array_sort()` in `STD_ARRAY` on the `list.data` property.
+* Changes to `list.data` should be accompanied by an update to `list.length` if applicable.
 
 ## Test Report
 
