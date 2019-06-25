@@ -15,7 +15,7 @@ lib_list_define_list_class()
 CREATE OBJECT LIST_CLASS, plants
 
 plants.push("oak tree").push("mouse").push("tulip")
-animals = plants.splice(2,1).push("cat").reverse()
+animals = plants.splice(2, 1).push("cat").reverse()
 
 {
     List contents:
