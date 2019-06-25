@@ -134,6 +134,12 @@ If you run `lib_list` with no routine specified, it will execute the test suite 
 |                              | _OK_       | `list . set ( EMPTY, 'z' ) . toString ( ) = [x,y,z]`                     |
 |                              | _OK_       | `list . set ( 0, 'foo' ) = EMPTY`                                        |
 |                              | _OK_       | `list . set ( 4, 'foo' ) = EMPTY`                                        |
+| shift                        |            |                                                                          |
+|                              | _OK_       | `list . toString ( ) = [a,b,c]`                                          |
+|                              | _OK_       | `list . shift ( ) = a`                                                   |
+|                              | _OK_       | `list . shift ( ) = b`                                                   |
+|                              | _OK_       | `list . toString ( ) = [c]`                                              |
+|                              | _OK_       | `list . clear ( ) . shift ( ) = EMPTY`                                   |
 | slice                        |            |                                                                          |
 |                              | _OK_       | `list . toString ( ) = [1,2,3,4,5,6,7,8]`                                |
 |                              | _OK_       | `list . slice ( 2, 4 ) . toString ( ) = [2,3]`                           |
@@ -152,12 +158,9 @@ If you run `lib_list` with no routine specified, it will execute the test suite 
 |                              | _OK_       | `list . clear ( ) . append ( '1' ) . toString ( ) = [1]`                 |
 |                              | _OK_       | `list . clear ( ) . toString ( ) = []`                                   |
 | unshift                      |            |                                                                          |
-|                              | _OK_       | `list . toString ( ) = [a,b,c]`                                          |
-|                              | _OK_       | `list . unshift ( ) = a`                                                 |
-|                              | _OK_       | `list . unshift ( ) = b`                                                 |
-|                              | _OK_       | `list . toString ( ) = [c]`                                              |
-|                              | _OK_       | `list . clear ( ) . unshift ( ) = EMPTY`                                 |
-
+|                              | _OK_       | `list . toString ( ) = []`                                               |
+|                              | _OK_       | `list . unshift ( 'x' ) . toString ( ) = [x]`                            |
+|                              | _OK_       | `list . unshift ( 'y' ) . unshift ( 'z' ) .toString ( ) = [z,y,x]`       |
 
 ## Contributions
 

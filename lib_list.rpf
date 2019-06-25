@@ -244,6 +244,17 @@ GLOBAL ROUTINE lib_list_test_list_class
     print_results ( "list . set ( 0, 'foo' )", list . set ( 0, "foo" ), EMPTY )
     print_results ( "list . set ( 4, 'foo' )", list . set ( 4, "foo" ), EMPTY )
 
+    { shift -------------------------------------------------------------------}
+    print_results_section ( "shift" )
+    CREATE OBJECT LIST_CLASS, list
+    list . append ( "a" ) . append ( "b" ) . append ( "c" )
+    print_results ( "list . toString ( )", list . toString ( ), "[a,b,c]" )
+    print_results ( "list . shift ( )", list . shift ( ), "a" )
+    print_results ( "list . shift ( )", list . shift ( ), "b" )
+    print_results ( "list . toString ( )", list . toString ( ), "[c]" )
+    print_results ( "list . clear ( ) . shift ( )",
+                     list . clear ( ) . shift ( ), EMPTY )
+
     { slice -------------------------------------------------------------------}
     print_results_section ( "slice" )
     CREATE OBJECT LIST_CLASS, list
@@ -294,13 +305,13 @@ GLOBAL ROUTINE lib_list_test_list_class
     { unshift -----------------------------------------------------------------}
     print_results_section ( "unshift" )
     CREATE OBJECT LIST_CLASS, list
-    list . append ( "a" ) . append ( "b" ) . append ( "c" )
-    print_results ( "list . toString ( )", list . toString ( ), "[a,b,c]" )
-    print_results ( "list . unshift ( )", list . unshift ( ), "a" )
-    print_results ( "list . unshift ( )", list . unshift ( ), "b" )
-    print_results ( "list . toString ( )", list . toString ( ), "[c]" )
-    print_results ( "list . clear ( ) . unshift ( )",
-                     list . clear ( ) . unshift ( ), EMPTY )
+    print_results ( "list . toString ( )", list . toString ( ), "[]" )
+    print_results ( "list . unshift ( 'x' ) . toString ( )",
+                     list . unshift ( "x" ) . toString ( ),
+                    "[x]" )
+    print_results ( "list . unshift ( 'y' ) . unshift ( 'z' ) .toString ( )",
+                     list . unshift ( "y" ) . unshift ( "z" ) .toString ( ),
+                    "[z,y,x]" )
 
 ENDROUTINE
 
@@ -690,18 +701,14 @@ ROUTINE list_action_toString ( self )
 ENDROUTINE
 
 {******************************************************************************}
-ROUTINE list_action_unshift ( self )
+ROUTINE list_action_unshift ( self, VALUE val )
     DECLARE result
     
-    IF self . length = 0 THEN
-        result = EMPTY
-    ELSE
-        result = self . get ( 1 )
-        array_remove_slice ( self . data, 1, 1 )
-        self . length = self . length - 1
-    ENDIF
+    array_insert_slice ( self . data, 1, 1 )
+    self . length = self . length + 1
+    self . set ( 1, val )
 
-    RETURN ( result )
+    RETURN ( self )
 ENDROUTINE
 
 {******************************************************************************}
