@@ -168,4 +168,4 @@ Pull requests welcome.
 
 ## Licensing
 
-This work is licensed under the MIT license. [Here's what this means.](https://choosealicense.com/licenses/mit/)
+This work is licensed under the [MIT license](LICENSE). [Here's what this means.](https://choosealicense.com/licenses/mit/)
