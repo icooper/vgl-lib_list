@@ -11,15 +11,16 @@ JOIN LIBRARY lib_list
 
 DECLARE plants, animals
 
-lib_list_define_list_class ( )
+lib_list_define_list_class()
 CREATE OBJECT LIST_CLASS, plants
 
-plants . push ( "oak tree" ) . push ( "mouse" ) . push ( "tulip" )
-animals = plants . splice ( 2, 1 ) . push ( "cat" ) . reverse ( )
+plants.push("oak tree").push("mouse").push("tulip")
+animals = plants.splice(2,1).push("cat").reverse()
 
 {
-    plants = [ oak tree, tulip ]
-    animals = [ cat, mouse ]
+    List contents:
+        plants = [ oak tree, tulip ]
+        animals = [ cat, mouse ]
 }
 ```
 
